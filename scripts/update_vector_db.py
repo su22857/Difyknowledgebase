@@ -11,8 +11,17 @@ COLLECTION_NAME = "knowledge_base"
 MODEL_NAME = "all-MiniLM-L6-v2"
 
 # 初始化模型和客户端
+print(f"Connecting to Qdrant at: {QDRANT_URL}")  # 调试输出
 model = SentenceTransformer(MODEL_NAME)
 client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+
+# 验证连接
+try:
+    client.get_collections()
+    print("Successfully connected to Qdrant.")
+except Exception as e:
+    print(f"Connection failed: {e}")
+    raise
 
 # 创建集合（如果不存在）
 if not client.collection_exists(COLLECTION_NAME):
