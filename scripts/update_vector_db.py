@@ -12,18 +12,17 @@ MODEL_NAME = "all-MiniLM-L6-v2"
 
 # 初始化模型和客户端
 model = SentenceTransformer(MODEL_NAME)
-client = QdrantClient(host="qdrant", port=6333)
+client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
 
 # 创建集合（如果不存在）
-try:
-    client.get_collection(COLLECTION_NAME)
-except Exception:
-    if client.collection_exists(collection_name):
-    client.delete_collection(collection_name)
-client.create_collection(
-    collection_name=collection_name,
-    vectors_config=VectorParams(size=384, distance=Distance.COSINE),
-)
+if not client.collection_exists(COLLECTION_NAME):
+    client.create_collection(
+        collection_name=COLLECTION_NAME,
+        vectors_config=VectorParams(size=384, distance=Distance.COSINE),
+    )
+    print(f"Collection '{COLLECTION_NAME}' created.")
+else:
+    print(f"Collection '{COLLECTION_NAME}' already exists.")
 
 # 读取所有 Markdown 文件
 docs = []
@@ -36,14 +35,17 @@ for path in Path(".").rglob("*.md"):
         })
 
 # 生成 Embeddings 并上传
-embeddings = model.encode([doc["text"] for doc in docs])
-points = [
-    {
-        "id": idx,
-        "vector": embedding.tolist(),
-        "payload": doc
-    }
-    for idx, (doc, embedding) in enumerate(zip(docs, embeddings))
-]
-client.upsert(collection_name=COLLECTION_NAME, points=points)
-print(f"Uploaded {len(points)} documents to Qdrant.")
+if docs:
+    embeddings = model.encode([doc["text"] for doc in docs])
+    points = [
+        {
+            "id": idx,
+            "vector": embedding.tolist(),
+            "payload": doc
+        }
+        for idx, (doc, embedding) in enumerate(zip(docs, embeddings))
+    ]
+    client.upsert(collection_name=COLLECTION_NAME, points=points)
+    print(f"Uploaded {len(points)} documents to Qdrant.")
+else:
+    print("No Markdown files found.")
