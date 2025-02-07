@@ -18,9 +18,12 @@ client = QdrantClient(host="qdrant", port=6333)
 try:
     client.get_collection(COLLECTION_NAME)
 except Exception:
-    client.recreate_collection(
-        collection_name=COLLECTION_NAME,
-        vectors_config=VectorParams(size=384, distance=Distance.COSINE)
+    client.if client.collection_exists(collection_name):
+    client.delete_collection(collection_name)
+client.create_collection(
+    collection_name=collection_name,
+    vectors_config=VectorParams(size=384, distance=Distance.COSINE),
+)
     )
 
 # 读取所有 Markdown 文件
