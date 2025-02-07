@@ -7,7 +7,7 @@ from pathlib import Path
 # 配置参数
 QDRANT_URL = os.getenv("QDRANT_URL")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
-COLLECTION_NAME = "DifyExternal-Knowledge-base"
+COLLECTION_NAME = "knowledge_base"
 MODEL_NAME = "all-MiniLM-L6-v2"
 
 # 初始化模型和客户端
@@ -17,10 +17,8 @@ client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
 # 创建集合（如果不存在）
 try:
     client.get_collection(COLLECTION_NAME)
-    print(f"Collection '{COLLECTION_NAME}' already exists.")
-except Exception as e:
-    print(f"Collection '{COLLECTION_NAME}' does not exist. Creating it.")
-    client.create_collection(
+except Exception:
+    client.recreate_collection(
         collection_name=COLLECTION_NAME,
         vectors_config=VectorParams(size=384, distance=Distance.COSINE)
     )
@@ -36,17 +34,14 @@ for path in Path(".").rglob("*.md"):
         })
 
 # 生成 Embeddings 并上传
-if docs:
-    embeddings = model.encode([doc["text"] for doc in docs])
-    points = [
-        {
-            "id": idx,
-            "vector": embedding.tolist(),
-            "payload": doc
-        }
-        for idx, (doc, embedding) in enumerate(zip(docs, embeddings))
-    ]
-    client.upsert(collection_name=COLLECTION_NAME, points=points)
-    print(f"Uploaded {len(points)} documents to Qdrant.")
-else:
-    print("No Markdown files found. No documents to upload.")
+embeddings = model.encode([doc["text"] for doc in docs])
+points = [
+    {
+        "id": idx,
+        "vector": embedding.tolist(),
+        "payload": doc
+    }
+    for idx, (doc, embedding) in enumerate(zip(docs, embeddings))
+]
+client.upsert(collection_name=COLLECTION_NAME, points=points)
+print(f"Uploaded {len(points)} documents to Qdrant.")
