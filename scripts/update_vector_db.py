@@ -24,7 +24,6 @@ client.create_collection(
     collection_name=collection_name,
     vectors_config=VectorParams(size=384, distance=Distance.COSINE),
 )
-    )
 
 # 读取所有 Markdown 文件
 docs = []
