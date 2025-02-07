@@ -18,7 +18,7 @@ client = QdrantClient(host="qdrant", port=6333)
 try:
     client.get_collection(COLLECTION_NAME)
 except Exception:
-    client.if client.collection_exists(collection_name):
+    if client.collection_exists(collection_name):
     client.delete_collection(collection_name)
 client.create_collection(
     collection_name=collection_name,
