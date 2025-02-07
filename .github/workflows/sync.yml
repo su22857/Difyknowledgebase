@@ -24,6 +24,6 @@ jobs:
       - name: Update Vector DB
         env:
           QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
-          QDRANT_URL: ${{ env.QDRANT_URL }}
+          QDRANT_URL: ${{ secrets.QDRANT_URL }}  # 确保 QDRANT_URL 也存储在 Secrets 中
         run: |
           python scripts/update_vector_db.py
