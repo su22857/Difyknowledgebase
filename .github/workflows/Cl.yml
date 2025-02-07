@@ -1,5 +1,1 @@
-- name: Wait for Qdrant
-  run: |
-    until curl -s http://qdrant:6333; do
-      sleep 1
-    done
+
