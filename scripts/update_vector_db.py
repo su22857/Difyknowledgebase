@@ -12,7 +12,7 @@ MODEL_NAME = "all-MiniLM-L6-v2"
 
 # 初始化模型和客户端
 model = SentenceTransformer(MODEL_NAME)
-client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+client = QdrantClient(host="qdrant", port=6333)
 
 # 创建集合（如果不存在）
 try:

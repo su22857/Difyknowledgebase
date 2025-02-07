@@ -22,17 +22,17 @@
             }
           },
           {
-            "id": "11d0da497eb5b5b5",
+            "id": "6cb0d5fb8ad543d5",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "FAQ.md",
+                "file": "README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "FAQ"
+              "title": "README"
             }
           }
         ],
@@ -199,9 +199,15 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "70baf68a80e10b78",
+  "active": "6cb0d5fb8ad543d5",
   "lastOpenFiles": [
+    "stet1.md",
+    "FAQ.md",
     "欢迎.md",
-    "FAQ.md"
+    "scripts/update_vector_db.py",
+    "scripts/update_vector_db.py.txt",
+    "scripts/新建文本文档.txt",
+    "scripts",
+    "新建文件夹"
   ]
 }
