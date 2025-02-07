@@ -7,7 +7,7 @@ from pathlib import Path
 # 配置参数
 QDRANT_URL = os.getenv("QDRANT_URL")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
-COLLECTION_NAME = "knowledge_base"
+COLLECTION_NAME = "DifyExternal-Knowledge-base"
 MODEL_NAME = "all-MiniLM-L6-v2"
 
 # 初始化模型和客户端
@@ -15,14 +15,15 @@ model = SentenceTransformer(MODEL_NAME)
 client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
 
 # 创建集合（如果不存在）
-if not client.collection_exists(COLLECTION_NAME):
+try:
+    client.get_collection(COLLECTION_NAME)
+    print(f"Collection '{COLLECTION_NAME}' already exists.")
+except Exception as e:
+    print(f"Collection '{COLLECTION_NAME}' does not exist. Creating it.")
     client.create_collection(
         collection_name=COLLECTION_NAME,
-        vectors_config=VectorParams(size=384, distance=Distance.COSINE),
+        vectors_config=VectorParams(size=384, distance=Distance.COSINE)
     )
-    print(f"Collection '{COLLECTION_NAME}' created.")
-else:
-    print(f"Collection '{COLLECTION_NAME}' already exists.")
 
 # 读取所有 Markdown 文件
 docs = []
@@ -48,4 +49,4 @@ if docs:
     client.upsert(collection_name=COLLECTION_NAME, points=points)
     print(f"Uploaded {len(points)} documents to Qdrant.")
 else:
-    print("No Markdown files found.")
+    print("No Markdown files found. No documents to upload.")
